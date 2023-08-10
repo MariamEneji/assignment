@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="allusers.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <!-- Make sure you put this AFTER Leaflet's CSS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <title>Document</title>
+
+  
+</head>
+
+
+<body>
+  
+
+  <center>
+    <h1>Found You</h1>
+  </center>
+
+  <main>
+    <div class="container" id="container">
+    </div>
+    <div class="users"></div>
+  </main>
+
+
+  <script>
+
+
+
+
+
+    const userContainer = document.querySelector('.users')
+    const details = function (data) {
+      const mappedUsers = data?.map((element, index) => {
+        return `<div class="project-card" key=${index}>
+               
+                <div class="details">
+                 <h3>User Name: ${element.name}</h3>
+                 <p>Email: ${element.email}</p>
+                 
+                
+               </div>
+          </div>`
+      }).join('')
+      document.querySelector('.container').insertAdjacentHTML('beforeend', mappedUsers)
+    }
+
+    const maoLocation = function (data) {
+
+      navigator.geolocation.getCurrentPosition((pos) => {
+   let { latitude, longitude } = pos.coords;
+
+
+      return data.forEach((element, index) => {
+        const mapp = document.createElement('div')
+        mapp.setAttribute('id', 'mapid' + index + 1)
+        mapp.style.height = '150pt'
+        userContainer.appendChild(mapp)
+        const map = L.map(mapp.getAttribute('id')).setView([latitude, longitude], 13);
+        console.log(map)
+        const attribute = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        const title = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+        const tiles = L.tileLayer(title, { attribute })
+        tiles.addTo(map);
+        const marker = L.marker([latitude, longitude], {
+          title: "Found You",
+         
+        }).addTo(map)
+      });
+    });
+    }
+
+    const getInfo = function () {
+      fetch('/api/info').then(response => response.json()).then(data => {
+        console.log(data)
+        if (data.length > 0) {
+          details(data)
+          maoLocation(data)
+
+        }
+        else {
+          const noinfo = `<h2>No User Found Please Fill the form</h2>`
+          document.querySelector('.container').innerHTML = noinfo
+        }
+
+      }
+      ).catch(err => console.log(err))
+    }
+
+    window.onload = getInfo
+  </script>
+</body>
+
+</html>

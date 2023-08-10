@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="allusers.css">
+  <style>
+    
+  </style>
+</head>
+
+
+
+<body>
+
+  <div class="card">
+
+    <div class="center">
+      <h1>Welcome to Home Page</h1>
+  
+    <form class="form">
+      <div>
+        <label for="name">
+          User Name
+        </label>
+        <input type="text" name="name" id="name" class="name">
+      </div>
+      <div>
+        <label for="email">User Email</label>
+        <input type="email" name="email" id="email" class="email">
+      </div>
+      <div>
+      <button type="submit">Submit</button>
+
+      <button><a href="allusers.html">See Users</a></button>
+    </form>
+  </div>
+    
+  </div>
+
+
+
+
+  <script>
+    const Form = document.querySelector('.form')
+
+
+    Form.addEventListener('submit', function (event) {
+      event.preventDefault()
+      const formData = {
+        name: document.querySelector('.name').value,
+        email: document.querySelector('.email').value,
+        id: Math.floor(Math.random() * 11000)
+      }
+      console.log(formData)
+
+      fetch('/api/sendinfo', {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      }).then(response => response.json()).then(data => console.log(data)).catch(err => console.log(err))
+    })
+  </script>
+</body>
+
+</html>
